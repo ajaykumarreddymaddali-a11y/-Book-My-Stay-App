@@ -1,122 +1,76 @@
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * UseCase2RoomModelingApp
+ * UseCase3RoomInventoryApp
  *
- * Demonstrates object modeling using abstraction, inheritance,
- * encapsulation, and polymorphism in a Hotel Booking System.
+ * Demonstrates centralized inventory management using HashMap
+ * to maintain room availability in a Hotel Booking System.
  *
  * @author YourName
  * @version 1.0
  */
 
-// Abstract class representing a generic Room
-abstract class Room {
+// Inventory Management Class
+class RoomInventory {
 
-    // Encapsulated attributes
-    private String roomType;
-    private int numberOfBeds;
-    private double pricePerNight;
+    // Centralized data structure (Single Source of Truth)
+    private Map<String, Integer> roomAvailability;
 
-    // Constructor
-    public Room(String roomType, int numberOfBeds, double pricePerNight) {
-        this.roomType = roomType;
-        this.numberOfBeds = numberOfBeds;
-        this.pricePerNight = pricePerNight;
+    // Constructor initializes inventory
+    public RoomInventory() {
+        roomAvailability = new HashMap<>();
+
+        // Initialize room types with availability
+        roomAvailability.put("Single Room", 5);
+        roomAvailability.put("Double Room", 3);
+        roomAvailability.put("Suite Room", 2);
     }
 
-    // Getters (Encapsulation)
-    public String getRoomType() {
-        return roomType;
+    // Retrieve availability for a specific room type
+    public int getAvailability(String roomType) {
+        return roomAvailability.getOrDefault(roomType, 0);
     }
 
-    public int getNumberOfBeds() {
-        return numberOfBeds;
+    // Update availability (controlled modification)
+    public void updateAvailability(String roomType, int newCount) {
+        if (roomAvailability.containsKey(roomType)) {
+            roomAvailability.put(roomType, newCount);
+        } else {
+            System.out.println("Room type not found: " + roomType);
+        }
     }
 
-    public double getPricePerNight() {
-        return pricePerNight;
-    }
+    // Display full inventory
+    public void displayInventory() {
+        System.out.println("===== Room Inventory =====");
 
-    // Abstract method (forces subclasses to implement)
-    public abstract void displayRoomDetails();
-}
-
-// Concrete class: Single Room
-class SingleRoom extends Room {
-
-    public SingleRoom() {
-        super("Single Room", 1, 2000.0);
-    }
-
-    @Override
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getRoomType());
-        System.out.println("Beds: " + getNumberOfBeds());
-        System.out.println("Price per night: ₹" + getPricePerNight());
-    }
-}
-
-// Concrete class: Double Room
-class DoubleRoom extends Room {
-
-    public DoubleRoom() {
-        super("Double Room", 2, 3500.0);
-    }
-
-    @Override
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getRoomType());
-        System.out.println("Beds: " + getNumberOfBeds());
-        System.out.println("Price per night: ₹" + getPricePerNight());
-    }
-}
-
-// Concrete class: Suite Room
-class SuiteRoom extends Room {
-
-    public SuiteRoom() {
-        super("Suite Room", 3, 6000.0);
-    }
-
-    @Override
-    public void displayRoomDetails() {
-        System.out.println("Room Type: " + getRoomType());
-        System.out.println("Beds: " + getNumberOfBeds());
-        System.out.println("Price per night: ₹" + getPricePerNight());
+        for (Map.Entry<String, Integer> entry : roomAvailability.entrySet()) {
+            System.out.println(entry.getKey() + " -> Available: " + entry.getValue());
+        }
     }
 }
 
 // Main Application Class
-public class UseCase2RoomModelingApp {
+public class UseCase3RoomInventoryApp {
 
     public static void main(String[] args) {
 
-        // Create room objects (Polymorphism)
-        Room singleRoom = new SingleRoom();
-        Room doubleRoom = new DoubleRoom();
-        Room suiteRoom = new SuiteRoom();
+        // Initialize inventory (Single Source of Truth)
+        RoomInventory inventory = new RoomInventory();
 
-        // Static availability (simple variables)
-        int singleRoomAvailable = 5;
-        int doubleRoomAvailable = 3;
-        int suiteRoomAvailable = 2;
+        // Display initial inventory
+        inventory.displayInventory();
 
-        System.out.println("===== Available Room Types =====\n");
+        System.out.println("\nUpdating availability...\n");
 
-        // Display Single Room details
-        singleRoom.displayRoomDetails();
-        System.out.println("Available: " + singleRoomAvailable);
-        System.out.println("--------------------------------");
+        // Controlled updates
+        inventory.updateAvailability("Single Room", 4);
+        inventory.updateAvailability("Suite Room", 1);
 
-        // Display Double Room details
-        doubleRoom.displayRoomDetails();
-        System.out.println("Available: " + doubleRoomAvailable);
-        System.out.println("--------------------------------");
+        // Display updated inventory
+        inventory.displayInventory();
 
-        // Display Suite Room details
-        suiteRoom.displayRoomDetails();
-        System.out.println("Available: " + suiteRoomAvailable);
-        System.out.println("--------------------------------");
-
-        System.out.println("Application terminated.");
+        System.out.println("\nApplication terminated.");
     }
 }
